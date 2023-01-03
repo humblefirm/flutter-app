@@ -6,13 +6,16 @@ import 'package:flutter_pwa_wrapper/push_notifications_manager.dart';
 
 class SETTINGS {
   static const title = 'Flutter PWA Wrapper';
-  static const url = 'https://bettysteger.com/flutter_pwa_wrapper/demo/'; // 'http://localhost:8887/'; // test dev
-  static const cookieDomain = null; // only necessary if you are using a subdomain and want it on the top-level domain
+  static const url =
+      'https://ba8b-121-134-224-169.ngrok.io'; // 'http://localhost:8887/'; // test dev
+  static const cookieDomain =
+      null; // only necessary if you are using a subdomain and want it on the top-level domain
 
   static const shouldAskForPushPermission = true;
   // set userAgent to prevent 403 Google 'Error: Disallowed_Useragent'
   // @see https://stackoverflow.com/a/69342626/595152
-  static const userAgent = "Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Mobile Safari/537.36";
+  static const userAgent =
+      "Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Mobile Safari/537.36";
 }
 
 Future<void> main() async {
@@ -57,9 +60,9 @@ class _MyHomePageState extends State<MyHomePage> {
     JavascriptChannel channel = JavascriptChannel(
       name: 'flutterChannel',
       onMessageReceived: (JavascriptMessage message) async {
-        if(message.message == 'getPushToken') {
+        if (message.message == 'getPushToken') {
           var pnm = PushNotificationsManager.getInstance();
-          if(SETTINGS.shouldAskForPushPermission) {
+          if (SETTINGS.shouldAskForPushPermission) {
             await pnm.requestPermission();
           }
           final pushToken = await pnm.getToken();
@@ -73,10 +76,13 @@ class _MyHomePageState extends State<MyHomePage> {
       initialUrl: SETTINGS.url,
       javascriptMode: JavascriptMode.unrestricted,
       javascriptChannels: {channel},
-      initialCookies: [WebViewCookie(name: 'isNative', value: 'true', domain: cookieDomain)],
+      initialCookies: [
+        WebViewCookie(name: 'isNative', value: 'true', domain: cookieDomain)
+      ],
       onWebViewCreated: (controller) {
         webviewController = controller;
-        PushNotificationsManager.getInstance().init(webviewController, SETTINGS.shouldAskForPushPermission);
+        PushNotificationsManager.getInstance()
+            .init(webviewController, SETTINGS.shouldAskForPushPermission);
       },
       onPageFinished: (url) {
         webviewController.runJavascript("""
@@ -91,7 +97,8 @@ class _MyHomePageState extends State<MyHomePage> {
       navigationDelegate: (navigation) {
         // debugPrint('navigationDelegate ${navigation.url} ${navigation.isForMainFrame}');
         Uri uri = Uri.parse(navigation.url);
-        if (!navigation.isForMainFrame || uri.host == Uri.parse(SETTINGS.url).host) {
+        if (!navigation.isForMainFrame ||
+            uri.host == Uri.parse(SETTINGS.url).host) {
           return NavigationDecision.navigate;
         }
         _launchURL(uri);
